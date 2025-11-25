@@ -1,316 +1,235 @@
 # 🌾 SIA - Sistema Inteligente Agrícola
 
-Sistema modular de predição agrícola com IA, desenvolvido com Streamlit e Groq.
+Sistema completo de predição e análise agrícola com Inteligência Artificial, integrando Machine Learning, Séries Temporais e Visão Computacional.
+
+## 🎯 Sobre o Projeto
+
+O SIA foi desenvolvido para auxiliar produtores rurais na tomada de decisões com base em dados reais e análises inteligentes. O sistema oferece:
+
+- 🌾 **Predição de Produtividade**: Estima a produção de culturas com Random Forest
+- 💰 **Análise de ROI**: Calcula retorno sobre investimento e viabilidade financeira
+- 🥛 **Previsão de Leite**: Modelo SARIMAX para séries temporais de produção leiteira
+- 🐄 **Detecção de Gado**: YOLO para contagem automática de animais em vídeos
+- 💬 **Chat Inteligente**: Assistente IA que responde perguntas sobre as análises
 
 ## 📁 Estrutura do Projeto
 
 ```
 SIA_FINAL/
 │
-├── app.py                      # Aplicação principal (código limpo e simples)
+├── app.py                      # Aplicação principal
 ├── requirements.txt            # Dependências Python
+├── packages.txt               # Pacotes do sistema (Linux)
 │
-├── modules/                    # Módulos organizados
-│   ├── __init__.py
-│   ├── agente_roi.py          # Cálculo de ROI e análise financeira
-│   ├── agente_chat.py         # Chat IA com Groq API
-│   ├── simulador.py           # Random Forest + carregamento de dados
-│   ├── predicao_leite.py      # SARIMAX para séries temporais
-│   └── deteccao_gado.py       # YOLO para detecção em vídeos
+├── modules/                   # Módulos do sistema
+│   ├── agente_roi.py         # Análise financeira e ROI
+│   ├── agente_chat.py        # Chat com IA (Groq)
+│   ├── simulador.py          # Predição com Random Forest
+│   ├── predicao_leite.py     # Séries temporais (SARIMAX)
+│   └── deteccao_gado.py      # Visão computacional (YOLO)
 │
-├── data/                       # Dados de treinamento
-│   └── crop_yield.csv         # Dataset agrícola (40k registros)
+├── data/                      # Datasets
+│   └── crop_yield.csv        # 40k registros de culturas
 │
-├── models/                     # Modelos treinados
-│   └── best.pt                # Modelo YOLO para gado
+├── models/                    # Modelos treinados
+│   └── best.pt               # YOLO para detecção de gado
 │
-└── config/                     # Configurações
-    └── .env                   # GROQ_API_KEY
-```
-
-## 🔧 Como Funciona Cada Módulo
-
-### 1. **app.py** - Aplicação Principal
-- **Responsabilidade**: Orquestrar a interface e integrar os módulos
-- **O que faz**:
-  - Configura a página Streamlit
-  - Carrega os módulos (agente_roi, agente_chat, simulador, etc.)
-  - Cria as 3 abas: Simulador, Leite, Gado
-  - Gerencia o chat na sidebar
-  - Coordena o fluxo de dados entre módulos
-
-**Por que é simples agora?**
-- Todo código complexo foi movido para os módulos
-- app.py apenas IMPORTA e COORDENA
-- Fácil de entender e manter
-
----
-
-### 2. **modules/agente_roi.py** - Agente Financeiro
-- **Responsabilidade**: Cálculos de ROI, custos e receitas
-- **Entradas**: 
-  - Cultura (crop)
-  - Produção prevista (prediction)
-  - Fertilizante usado (fertilizer)
-  - Irrigação usada (irrigation)
-- **Saídas**: 
-  ```python
-  {
-    "financeiro": {
-      "receita_bruta": 15000.00,
-      "custo_total": 4500.00,
-      "lucro_liquido": 10500.00,
-      "roi_percentual": 233.33,
-      "payback_meses": 3.6
-    },
-    "status": "lucrativo",
-    "recomendacao": "Excelente! ROI acima de 100%..."
-  }
-  ```
-
-**Principais Funções**:
-- `calcular_roi(predicao_data)` - Calcula ROI completo
-- `_gerar_recomendacao(roi, lucro)` - Gera texto de recomendação
-
----
-
-### 3. **modules/agente_chat.py** - Chat IA
-- **Responsabilidade**: Responder perguntas usando contexto JSON
-- **Como funciona**:
-  1. Recebe mensagem do usuário
-  2. Busca no contexto JSON (simulacao, predicao_leite, deteccao_gado)
-  3. Se encontrar resposta rápida, retorna diretamente
-  4. Se não, envia para Groq API com contexto completo
-
-**Exemplos de Perguntas**:
-- "Qual o ROI?" → Busca em `contexto_json['roi']`
-- "Como está o leite?" → Busca em `contexto_json['predicao_leite']`
-- "Quantas vacas?" → Busca em `contexto_json['deteccao_gado']`
-- "Me dê um resumo geral" → Combina TODOS os dados
-
-**Principais Funções**:
-- `responder(mensagem, contexto_json)` - Processa pergunta
-
----
-
-### 4. **modules/simulador.py** - Machine Learning
-- **Responsabilidade**: Treinar Random Forest e fazer predições
-- **Componentes**:
-  - `carregar_dados(dataset_path)` - Carrega CSV e faz amostragem
-  - `ModeloML` - Classe com Random Forest
-    - `treinar()` - Treina modelo com 40k registros
-    - `predizer(dados)` - Faz predição de produtividade
-
-**Fluxo**:
-1. Usuário preenche formulário (região, solo, cultura...)
-2. `ModeloML.predizer()` processa os dados
-3. Retorna: `{'prediction': 5.23, 'percentile': 78.5}`
-4. app.py chama `AgenteROI.calcular_roi()` para calcular finanças
-
----
-
-### 5. **modules/predicao_leite.py** - Séries Temporais
-- **Responsabilidade**: Previsão de produção de leite com SARIMAX
-- **Como funciona**:
-  1. Usuário faz upload de CSV com dados mensais
-  2. Escolhe período inicial e meses para previsão
-  3. SARIMAX analisa sazonalidade e tendência
-  4. Gera previsão e gráficos
-
-**Principais Funções**:
-- `show_milk_prediction()` - Interface completa da aba
-
-**Contexto Salvo**:
-```python
-st.session_state.contexto_json['predicao_leite'] = {
-  'media_historica': 1523.45,
-  'media_prevista': 1678.90,
-  'variacao_percentual': +10.2,
-  'meses_previsao': 12
-}
+└── config/                    # Configurações
+    └── .env                  # API keys (criar manualmente)
 ```
 
 ---
 
-### 6. **modules/deteccao_gado.py** - Visão Computacional
-- **Responsabilidade**: Detectar e contar gado em vídeos com YOLO
-- **Fluxo**:
-  1. Usuário faz upload de vídeo MP4
-  2. YOLO processa frame por frame
-  3. Detecta vacas (confiança > 0.5)
-  4. Desenha caixas verdes e conta
-  5. Gera vídeo processado + Excel com métricas
+## 🚀 Como Usar
 
-**Principais Funções**:
-- `show_cattle_detection(yolo_model_path)` - Interface completa
-
-**Contexto Salvo**:
-```python
-st.session_state.contexto_json['deteccao_gado'] = {
-  'frames_processados': 1250,
-  'media_vacas': 47.3,
-  'maximo_vacas': 53,
-  'fps_medio': 12.5
-}
+### **Passo 1: Clonar o Repositório**
+```bash
+git clone https://github.com/thayckowisk/SIA--SISTEMA-INTELIGENTE-AGRON-MICO.git
+cd SIA--SISTEMA-INTELIGENTE-AGRON-MICO
 ```
 
----
-
-## 🚀 Como Executar
-
-1. **Instalar dependências**:
+### **Passo 2: Instalar Dependências**
 ```bash
 pip install -r requirements.txt
 ```
 
-2. **Configurar Groq API**:
-Crie `config/.env`:
+### **Passo 3: Configurar API Key (Opcional)**
+Para usar o chat inteligente, crie o arquivo `config/.env`:
 ```
 GROQ_API_KEY=gsk_sua_chave_aqui
 ```
+> 💡 Obtenha sua chave gratuita em: https://console.groq.com
 
-3. **Executar**:
+### **Passo 4: Executar o Sistema**
 ```bash
 streamlit run app.py
 ```
 
-4. **Acessar**:
-http://localhost:8501
+### **Passo 5: Acessar**
+Abra seu navegador em: **http://localhost:8501**
 
 ---
 
-## 💡 Por Que Modularizar?
+## 📱 Como Usar Cada Funcionalidade
 
-### **Antes** (1093 linhas em um arquivo):
-- ❌ Difícil de entender
-- ❌ Difícil de manter
-- ❌ Difícil de explicar
-- ❌ Difícil de testar partes individualmente
+### 🌾 **Simulador de Produtividade**
+1. Selecione a cultura (Soja, Milho, Arroz, etc.)
+2. Configure região, tipo de solo e clima
+3. Ajuste temperatura, chuva e dias até colheita
+4. Marque se usa fertilizante e irrigação
+5. Clique em **"Simular Produtividade"**
+6. Veja a produção estimada (t/ha) e análise de ROI
 
-### **Depois** (módulos separados):
-- ✅ Cada módulo tem 1 responsabilidade clara
-- ✅ Fácil de entender o que cada parte faz
-- ✅ Fácil de modificar sem quebrar outras partes
-- ✅ Fácil de testar módulos individualmente
-- ✅ Fácil de explicar em apresentações
+### 🥛 **Predição de Leite**
+1. Prepare um CSV com dados mensais de produção
+2. Faça upload do arquivo
+3. Selecione a data inicial
+4. Escolha quantos meses deseja prever (1-48)
+5. Clique em **"Processar"**
+6. Analise gráficos de tendência e baixe a previsão
 
----
+### 🐄 **Detecção de Gado**
+1. Grave ou obtenha um vídeo do seu rebanho (MP4, AVI, MOV)
+2. Faça upload do vídeo
+3. Clique em **"Processar"**
+4. Aguarde a análise (pode levar alguns minutos)
+5. Baixe o vídeo com detecções marcadas
+6. Baixe a planilha Excel com estatísticas
 
-## 📊 Fluxo de Dados Completo
-
-### Aba 1 - Simulador:
-```
-Usuário preenche formulário
-    ↓
-modules/simulador.py (ModeloML.predizer)
-    ↓
-modules/agente_roi.py (calcular_roi)
-    ↓
-st.session_state.contexto_json['simulacao'] + ['roi']
-    ↓
-Chat pode usar esses dados!
-```
-
-### Aba 2 - Leite:
-```
-Upload CSV
-    ↓
-modules/predicao_leite.py (SARIMAX)
-    ↓
-st.session_state.contexto_json['predicao_leite']
-    ↓
-Chat pode responder sobre leite!
-```
-
-### Aba 3 - Gado:
-```
-Upload vídeo
-    ↓
-modules/deteccao_gado.py (YOLO)
-    ↓
-st.session_state.contexto_json['deteccao_gado']
-    ↓
-Chat pode responder sobre gado!
-```
-
-### Chat Sidebar:
-```
-Usuário pergunta "Qual o ROI?"
-    ↓
-modules/agente_chat.py
-    ↓
-Busca em contexto_json['simulacao'] e ['roi']
-    ↓
-Resposta rápida ou Groq API se complexo
-```
+### 💬 **Chat Inteligente**
+1. Execute qualquer análise acima
+2. Abra o chat na sidebar (clique na seta)
+3. Faça perguntas como:
+   - "Qual o ROI da simulação?"
+   - "Vale a pena investir?"
+   - "Como está a produção de leite?"
+   - "Quantas vacas foram detectadas?"
+4. O assistente responde com base nos seus dados
 
 ---
 
-## 🎯 Melhorias Implementadas
+## 🛠️ Tecnologias Utilizadas
 
-### Layout:
-- ✅ Título grande e visível no topo
-- ✅ CSS gradiente moderno
-- ✅ Sidebar começa FECHADA (`initial_sidebar_state="collapsed"`)
-- ✅ Chat sem descrição longa, direto ao ponto
-- ✅ Métricas visuais com cards coloridos
-
-### Código:
-- ✅ app.py com apenas **329 linhas** (antes: 1093!)
-- ✅ 6 módulos organizados por função
-- ✅ Cada módulo é independente e reutilizável
-- ✅ Imports claros no início
-
-### Pastas:
-- ✅ Removidas pastas antigas (03.WEB_SIMULADOR, 04.LEITE, etc.)
-- ✅ Apenas SIA_FINAL/ com estrutura profissional
-- ✅ Tudo organizado: data/, models/, config/, modules/
+| Tecnologia | Função |
+|------------|---------|
+| **Python 3.13** | Linguagem principal |
+| **Streamlit** | Interface web interativa |
+| **Scikit-learn** | Random Forest para predição |
+| **Statsmodels** | SARIMAX para séries temporais |
+| **Ultralytics YOLO** | Detecção de objetos em vídeo |
+| **OpenCV** | Processamento de vídeo |
+| **Groq API** | LLM para chat inteligente |
+| **LangChain** | Framework para IA conversacional |
+| **Pandas** | Manipulação de dados |
+| **Matplotlib** | Visualização de gráficos |
 
 ---
 
-## 📚 Tecnologias Usadas
+## 📂 Estrutura de Arquivos
 
-- **Streamlit**: Interface web
-- **Groq API**: LLM ultra-rápido (Llama 3.3 70B)
-- **LangChain**: Framework para LLM
-- **Random Forest**: ML para produtividade
-- **SARIMAX**: Séries temporais
-- **YOLO (ultralytics)**: Detecção de objetos
-- **OpenCV**: Processamento de vídeo
-- **Pandas**: Manipulação de dados
-- **Matplotlib**: Gráficos
-
----
-
-## 🤝 Contribuindo
-
-Se quiser adicionar novos módulos:
-
-1. Crie arquivo em `modules/novo_modulo.py`
-2. Importe no `app.py`
-3. Adicione uma nova aba se necessário
-4. Salve contexto em `st.session_state.contexto_json`
-
-**Exemplo**:
-```python
-# modules/analise_solo.py
-def analisar_solo(dados_solo):
-    # Sua lógica aqui
-    return resultado
-
-# app.py
-from modules.analise_solo import analisar_solo
-
-# Adicionar em nova aba
-with tab4:
-    resultado = analisar_solo(dados)
+```
+SIA_FINAL/
+│
+├── app.py                      # Aplicação principal
+├── requirements.txt            # Dependências
+├── packages.txt               # Pacotes sistema (Streamlit Cloud)
+│
+├── modules/                   # Módulos do sistema
+│   ├── agente_roi.py         # Análise financeira
+│   ├── agente_chat.py        # Chat com IA
+│   ├── simulador.py          # Predição de produtividade
+│   ├── predicao_leite.py     # Previsão de leite
+│   └── deteccao_gado.py      # Detecção em vídeo
+│
+├── data/                      # Datasets
+│   └── crop_yield.csv        # 40k registros de culturas
+│
+├── models/                    # Modelos treinados
+│   └── best.pt               # YOLO para gado
+│
+└── config/                    # Configurações
+    └── .env                  # API keys (não versionado)
 ```
 
 ---
 
-## 📞 Suporte
+## 💰 Análise de ROI - Preços Reais
 
-Para dúvidas sobre cada módulo, veja o código comentado em `modules/`.
+O sistema usa **preços atualizados do mercado brasileiro (2024/2025)**:
+
+### **Preços por Tonelada (CEPEA/CONAB/B3)**
+- Arroz: R$ 1.800/ton
+- Soja: R$ 1.400/ton (saca R$ 140)
+- Milho: R$ 650/ton (saca R$ 65)
+- Algodão: R$ 7.500/ton (arroba R$ 500)
+- Trigo: R$ 1.200/ton
+- Cevada: R$ 1.100/ton
+
+### **Custos por Hectare**
+- Custo Base: R$ 3.200 (sementes + defensivos + mão de obra + maquinário)
+- Fertilizante: R$ 2.500 (NPK + micronutrientes)
+- Irrigação: R$ 1.800 (energia + manutenção)
+
+### **Interpretação do ROI**
+- **ROI > 80%**: 🌟 Excelente - Investimento altamente lucrativo
+- **ROI > 40%**: ✅ Bom - Retorno acima da média
+- **ROI > 15%**: ⚠️ Modesto - Comum na agricultura
+- **ROI > 0%**: ⚡ Baixo - Considere otimizações
+- **ROI < 0%**: ❌ Prejuízo - Revise estratégia
+
+---
+
+## 🎓 Sobre o Desenvolvimento
+
+Este projeto foi desenvolvido como trabalho de conclusão em Inteligência Artificial aplicada à agricultura. O objetivo é demonstrar a integração de múltiplas técnicas de IA em uma aplicação prática e funcional.
+
+### **Decisões Técnicas**
+
+**Por que Random Forest?**
+- Ideal para dados tabulares
+- Não requer normalização complexa
+- Interpretável e rápido
+
+**Por que SARIMAX?**
+- Captura sazonalidade em dados mensais
+- Validado cientificamente para agricultura
+
+**Por que YOLO?**
+- Estado da arte em detecção em tempo real
+- Modelo pré-treinado para animais
+
+**Por que Groq?**
+- 10x mais rápido que OpenAI
+- Gratuito (6000 tokens/min)
+- Respostas em < 1 segundo
+
+---
+
+## 🔒 Licença
+
+Este projeto é de código aberto e está disponível para uso educacional e comercial.
+
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por **Thaycko Wisk**
+
+📧 Contato: [seu-email@exemplo.com]
+🔗 GitHub: [@thayckowisk](https://github.com/thayckowisk)
+
+---
+
+## 🙏 Agradecimentos
+
+- Dataset de culturas: Kaggle
+- Modelo YOLO: Ultralytics
+- API LLM: Groq
+- Framework: Streamlit
+
+---
+
+**⭐ Se este projeto foi útil, deixe uma estrela no GitHub!**
 
 **Estrutura é simples**:
 - 1 módulo = 1 função
