@@ -1,0 +1,23 @@
+# Core ML & Data
+streamlit>=1.28.0
+pandas>=2.1.0
+numpy>=1.26.0
+scikit-learn>=1.3.0
+openpyxl>=3.1.0
+
+# Visualização
+matplotlib>=3.7.0
+
+# Groq e LangChain (Chat IA)
+python-dotenv>=1.0.0
+langchain>=0.0.350
+langchain-groq>=0.1.0
+langchain-core>=0.1.0
+
+# Análise de Séries Temporais (Predição de Leite)
+statsmodels>=0.14.0
+
+# Visão Computacional (Detecção de Gado)
+ultralytics>=8.0.0
+opencv-python>=4.8.0
+pillow>=10.0.0
