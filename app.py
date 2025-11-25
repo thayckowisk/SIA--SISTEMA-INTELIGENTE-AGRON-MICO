@@ -31,7 +31,7 @@ YOLO_MODEL_PATH = MODELS_DIR / "best.pt"
 
 # ==================== CONFIGURAÇÃO DA PÁGINA ====================
 st.set_page_config(
-    page_title="SIA - Sistema Inteligente Agronômico,
+    page_title="SIA - Sistema Inteligente Agrícola",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="collapsed"
