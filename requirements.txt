@@ -19,5 +19,5 @@ statsmodels>=0.14.0
 
 # Visão Computacional (Detecção de Gado)
 ultralytics>=8.0.0
-opencv-python>=4.8.0
+opencv-python-headless>=4.8.0
 pillow>=10.0.0
