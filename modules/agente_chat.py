@@ -5,9 +5,21 @@ Responde perguntas sobre simulador, leite e gado usando contexto JSON
 
 import os
 import json
-from langchain_groq import ChatGroq
-from langchain.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+
+try:
+    from langchain_groq import ChatGroq
+    from langchain_core.prompts import PromptTemplate
+    from langchain_core.output_parsers import StrOutputParser
+except ImportError:
+    # Fallback para versões antigas
+    try:
+        from langchain_groq import ChatGroq
+        from langchain.prompts import PromptTemplate
+        from langchain_core.output_parsers import StrOutputParser
+    except ImportError:
+        ChatGroq = None
+        PromptTemplate = None
+        StrOutputParser = None
 
 class AgenteChat:
     """Agente de chat com Groq - Contexto JSON completo de TODAS as análises"""
