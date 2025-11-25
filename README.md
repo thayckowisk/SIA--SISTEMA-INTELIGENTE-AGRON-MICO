@@ -1,6 +1,6 @@
-# 🌾 SIA - Sistema Inteligente Agrícola
+# 🌾 SIA - Sistema Inteligente Agronômico
 
-Sistema completo de predição e análise agrícola com Inteligência Artificial, integrando Machine Learning, Séries Temporais e Visão Computacional.
+Sistema completo de predição e análise agronômica com Inteligência Artificial, integrando Machine Learning, Séries Temporais e Visão Computacional.
 
 ## 🎯 Sobre o Projeto
 
@@ -238,4 +238,4 @@ Desenvolvido por **Thayckowisk**
 
 ---
 
-Desenvolvido com ❤️ para facilitar análises agrícolas com IA.
+Desenvolvido com ❤️ para facilitar análises agronômicas com IA.

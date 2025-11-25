@@ -1,5 +1,5 @@
 """
-SIA - Sistema Inteligente Agrícola
+SIA - Sistema Inteligente Agronômico
 Aplicação modular com predição de produtividade, leite e detecção de gado
 """
 
@@ -31,6 +31,7 @@ YOLO_MODEL_PATH = MODELS_DIR / "best.pt"
 
 # ==================== CONFIGURAÇÃO DA PÁGINA ====================
 st.set_page_config(
+    page_title="SIA - Sistema Inteligente Agronômico",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -115,7 +116,7 @@ def main():
     # Título visível
     st.markdown("""
     <div class="main-title">
-        <h1>🌾 SIA - Sistema Inteligente Agrícola</h1>
+        <h1>🌾 SIA - Sistema Inteligente Agronômico</h1>
         <p>Predição de Produtividade com Inteligência Artificial</p>
     </div>
     """, unsafe_allow_html=True)
