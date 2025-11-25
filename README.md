@@ -213,9 +213,9 @@ Este projeto é de código aberto e está disponível para uso educacional e com
 
 ## 👨‍💻 Autor
 
-Desenvolvido por **Thaycko Wisk**
+Desenvolvido por **Thayckowisk**
 
-📧 Contato: [seu-email@exemplo.com]
+📧 Contato: [thayckowisk@discente.ufg.br]
 🔗 GitHub: [@thayckowisk](https://github.com/thayckowisk)
 
 ---
