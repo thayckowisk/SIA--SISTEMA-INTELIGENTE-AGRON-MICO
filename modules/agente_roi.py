@@ -6,16 +6,23 @@ Calcula ROI, custos e receitas de produção agrícola
 class AgenteROI:
     """Agente especializado em calcular ROI e análise financeira"""
     
-    # Preços médios por tonelada (R$) - Valores de 2024
+    # Preços médios por tonelada (R$) - Valores reais mercado brasileiro 2024/2025
+    # Fonte: CEPEA, CONAB, B3
     PRECOS_CULTURAS = {
-        'Rice': 1200, 'Wheat': 900, 'Corn': 850, 'Barley': 800,
-        'Soybeans': 1500, 'Cotton': 3200, 'Soybean': 1500, 'Maize': 850
+        'Rice': 1800,      # Arroz: R$ 1.800/ton (alta recente)
+        'Wheat': 1200,     # Trigo: R$ 1.200/ton
+        'Corn': 650,       # Milho: R$ 650/ton (saca R$ 65)
+        'Barley': 1100,    # Cevada: R$ 1.100/ton
+        'Soybeans': 1400,  # Soja: R$ 1.400/ton (saca R$ 140)
+        'Cotton': 7500,    # Algodão: R$ 7.500/ton (arroba R$ 500)
+        'Soybean': 1400,   # Soja alternativo
+        'Maize': 650       # Milho alternativo
     }
     
-    # Custos por hectare (R$)
-    CUSTO_FERTILIZANTE = 800
-    CUSTO_IRRIGACAO = 1200
-    CUSTO_BASE = 2500  # Sementes, mão de obra, maquinário
+    # Custos REAIS por hectare (R$) - Média Brasil 2024/2025
+    CUSTO_FERTILIZANTE = 2500   # NPK + micronutrientes (aumentou muito)
+    CUSTO_IRRIGACAO = 1800      # Energia + manutenção
+    CUSTO_BASE = 3200           # Sementes (R$ 800) + Defensivos (R$ 1.200) + Mão de obra (R$ 800) + Maquinário (R$ 400)
     
     @staticmethod
     def calcular_roi(predicao_data):
@@ -76,12 +83,14 @@ class AgenteROI:
     
     @staticmethod
     def _gerar_recomendacao(roi, lucro):
-        """Gera recomendação baseada no ROI"""
-        if roi > 100:
-            return "Excelente! ROI acima de 100%. Investimento altamente recomendado."
-        elif roi > 50:
-            return "Bom ROI. Investimento viável com retorno sólido."
+        """Gera recomendação baseada no ROI - Padrões agricultura brasileira"""
+        if roi > 80:
+            return "🌟 Excelente! ROI acima de 80%. Investimento altamente lucrativo."
+        elif roi > 40:
+            return "✅ Bom ROI. Investimento viável com retorno sólido acima da média."
+        elif roi > 15:
+            return "⚠️ ROI modesto (~15-40%). Comum na agricultura, mas avalie melhorias."
         elif roi > 0:
-            return "ROI positivo mas modesto. Considere otimizações."
+            return "⚡ ROI positivo mas baixo. Considere otimizar insumos ou trocar cultura."
         else:
-            return "ROI negativo. Revise custos ou mude estratégia."
+            return "❌ Prejuízo. Revise custos, clima ou considere outra cultura/região."
